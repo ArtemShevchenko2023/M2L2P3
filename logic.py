@@ -8,8 +8,9 @@ class Pokemon:
     # Инициализация объекта (конструктор)
     def __init__(self, pokemon_trainer):
 
-        self.pokemon_trainer = pokemon_trainer   
-
+        self.pokemon_trainer = pokemon_trainer
+        self.hp = randint(20, 100)
+        self.power = randint(10, 50)
         self.pokemon_number = randint(1,1000)
         self.img = self.get_img()
         self.name = self.get_name()
@@ -35,15 +36,33 @@ class Pokemon:
             return (data['forms'][0]['name'])
         else:
             return "Pikachu"
+    def attack(self, enemy):
+        if isinstance(enemy, Wizard): # Проверка на то, что enemy является типом данных Wizard (является экземпляром класса Волшебник)
+            chance = randint(1,5)
+            if chance == 1:
+                return "Покемон-волшебник применил щит в сражении"
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Сражение @{self.pokemon_trainer} с @{enemy.pokemon_trainer}"
+        else:
+            enemy.hp = 0
+            return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}! "
+        
 
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name}"
+        return f"Имя твоего покемона: {self.name}, Здоровье: {self.hp}, Сила: {self.power}"
 
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
-
-
-
+class Fighter(Pokemon):
+    def attack(self, enemy):
+        sp = randint(5,15)
+        self.power += sp
+        result = super().attack(enemy)
+        self.power -= sp
+        return result + f"\n Боец применил супер-атаку силой: {sp} "
+class Wizard(Pokemon):
+    pass
