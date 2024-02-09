@@ -1,6 +1,8 @@
 import telebot 
 from config import token
 import random
+from datetime import datetime, timedelta
+import time
 from logic import *
 
 bot = telebot.TeleBot(token) 
@@ -44,7 +46,17 @@ def info(message):
         bot.send_photo(message.chat.id, pok.show_img())
     else:
         bot.send_message(message.chat.id, "Ты не создал себе покемона")
-
+@bot.message_handler(commands=['feed'])
+def feed(self, feed_interval = 20, hp_increase = 10 ):
+    current_time = datetime.now()  
+    delta_time = timedelta(seconds=feed_interval)  
+    if (current_time - self.last_feed_time) > delta_time:
+        self.hp += hp_increase
+        self.last_feed_time = current_time
+        return f"Здоровье покемона увеличено. Текущее здоровье: {self.hp}"
+    else:
+        time.sleep(21)
+        return f"Следующее время кормления покемона: {current_time+delta_time}"
 
 bot.infinity_polling(none_stop=True)
 
